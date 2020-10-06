@@ -15,13 +15,13 @@
 
 <img src="images/2020-08-19 10-57-05屏幕截图.png" style="zoom:120%;" />
 
-然后进行累乘计算：
+然后进行累乘计算：     
 $$
 {_6^0\!T}  = {_1^0\!T}{_2^1\!T}{_3^2\!T}{_4^3\!T}{_5^4\!T}{_6^5\!T}
 $$
 通过得到的齐次变换矩阵，就可以从中读出或者计算出末端的位姿。
 
-具体计算过程如下：
+具体计算过程如下：      
 $$
 x = {_6^0\!T}(1,4),\ y={_6^0\!T}(2,4),z={_6^0\!T}(3,4)\\
 roll=arccos({_6^0\!T}(3,3)/cos(pitch))   \\
@@ -140,7 +140,8 @@ Eigen::MatrixXd DK::calDK()
 
 逆运动学要求输入初始位置和角度共6个参数，在gazebo中默认角度表示为XYZ固定角，而通过机器人参数解算出能够到达该位姿的可能解，由于实验用的机器人均为旋转关节，最后需要解出6个关节角度。常见的方法有几何法和解析法，我们这里采用了全解析法去求解机械臂六个关节的关节变量。
 
-首先需要对输入进行处理，将其转化为齐次变换矩阵 ${_6^0\!T}$，具体变换形式如下，设输入为: x,y,z,c,b,a
+首先需要对输入进行处理，将其转化为齐次变换矩阵 ${_6^0\!T}$，具体变换形式如下，设输入为: x,y,z,c,b,a     
+
 $$
 {_6^0\!T}=\begin{bmatrix}
 cos(a)*cos(b)&cos(a)*sin(b)*sin(c)-sin(a)*cos(c)&cos(a)*sin(b)*cos(c)+sin(a)*sin(c)&x\\
@@ -154,12 +155,16 @@ r21&r22&r23&y\\
 r31&r32&r33&z\\
 0&0&0&1
 \end{bmatrix}
+
 $$
 ​                                      
 
-这个变换矩阵中所有参数都是已知的，接下来需要用未知角度列出6个旋转关节的变换矩阵，如下所示,未知角度设为${\theta{_1}}$,${\theta{_2}}$,${\theta{_3}}$,${\theta{_4}}$,${\theta{_5}}$,${\theta{_6}}$。  
+
+这个变换矩阵中所有参数都是已知的，接下来需要用未知角度列出6个旋转关节的变换矩阵，如下所示,未知角度设为
+${\theta{_1}}$,${\theta{_2}}$,${\theta{_3}}$,${\theta{_4}}$,${\theta{_5}}$,${\theta{_6}}$ 。  
 
 d1,a2,d4,d6为机器人已知参数
+
 $$
 {_1^0\!T}=\begin{bmatrix}
 cos\theta{_1}&-sin\theta{_1}&0&0\\
@@ -202,38 +207,48 @@ cos\theta{_6}&-sin\theta{_6}&0&0\\
 sin\theta{_6}&cos\theta{_6}&0&0\\
 0&0&0&1
 \end{bmatrix}
+
 $$
 
 
 接下来用解析法求解6个关节角度。
 
-首先求解${\theta{_1}}$,观察由未知角度组成的矩阵$_6^1\!T$
+首先求解${\theta{_1}}$,观察由未知角度组成的矩阵 $_6^1\!T$
+
 $$
 _6^1\!T=_2^1\!T*_3^2\!T*_4^3\!T*_5^4\!T*_6^5\!T
+
 $$
+
 观察到
+
 $$
 _6^1\!T(2,3)=cos\theta{_5}*sin\theta{_4}\\
 _6^1\!T(2,4)=cos\theta{_5}*sin\theta{_4}*d6
+
 $$
+
 其比值为已知定值参数d6，而由已知参数组成的$_6^0\!T$也可以通过左乘仅含$\theta{_1}$的变换矩阵的逆矩阵得到$_6^1\!T$
 
 $$
 _6^1\!T=(_1^0\!T)^{-1}*_6^0\!T\\
 _6^1\!T(2,3)=cos\theta{_1}*r23-sin\theta{_1}*r13\\
 _6^1\!T(2,4)=cos\theta{_1}*y-sin\theta{_1}*x
+
 $$
 因此有
 
 $$
 d6=\frac{cos\theta{_1}*y-sin\theta{_1}*x}{cos\theta{_1}*r23-sin\theta{_1}*r13}\\
 \theta{_1}=atan(\frac{d6*r23-y}{d6*r13-x})
+
 $$
 
 
 接下来求${\theta{_3}}$，观察由未知角度组成的矩阵$_5^1\!T$
 $$
 _5^1\!T=_2^1\!T*_3^2\!T*_4^3\!T*_5^4\!T
+
 $$
 观察到其中两项平方和可以化简成仅含$\theta{_3}$的形式
 
@@ -241,72 +256,96 @@ $$
 _5^1\!T(1,4)=cos\theta{_2}*a2+d4*sin(\theta{_2}+\theta{_3})\\
 _5^1\!T(3,4)=sin\theta{_2}*a2-d4*cos(\theta{_2}+\theta{_3})\\
 {(cos\theta{_2}*a2+d4*sin(\theta{_2}+\theta{_3}))}^2+{(sin\theta{_2}*a2-d4*cos(\theta{_2}+\theta{_3}))}^2={a2}^2+{d4}^2+2*a2*d4*sin\theta{_3}
+
 $$
 再将已知参数的$_6^0\!T$变换成$_5^1\!T$
+
 $$
 _5^1\!T=(_1^0\!T)^{-1}*_6^0\!T*(_6^5\!T)^{-1}\\
 _5^1\!T(1,4)=cos\theta{_1}*x+sin\theta{_1}*y-d6*r13*cos\theta{_1}-d6*r23*sin\theta{_1}\\
 _5^1\!T(3,4)=z-d1-d6*r33\\
+
 $$
 其中参数均为已知量，因此有
 $$
 \theta{_3}=asin(\frac{(cos\theta{_1}*x+sin\theta{_1}*y-d6*r13*cos\theta{_1}-d6*r23*sin\theta{_1})^2+(z-d1-d6*r33)^2-a2^2-d4^2}{2*a2*d4})
+
 $$
 
 
 下面求解$\theta{_2}$，观察由未知角度组成的矩阵$_5^0\!T$，观察到
 $$
 _5^0\!T(3,4)=d1+sin\theta{_2}*a2-d4*cos(\theta{_2}+\theta{_3})
+
 $$
 再将已知参数的$_6^0\!T$变换成$_5^0\!T$
+
 $$
 _5^0\!T=_6^0\!T*(_6^5\!T)^{-1}\\
 _5^0\!T(3,4)=z-d6*r33
+
 $$
 因此联立求解
 $$
 (d4*sin\theta{_3}+a2)*sin\theta{_2}-d4*cos\theta{_3}*cos\theta{_2}=z-d6*r33-d1
+
 $$
 这里需要配凑角来辅助解出结果，设为$\alpha$
 $$
 \alpha=acos(\frac{d4*sin\theta{_3}+a2}{\sqrt{(d4*sin\theta{_3}+a2)^2+(d4*cos\theta{_3})^2}})\\
 sin(\theta{_2}-\alpha)=\frac{z-d6*r33-d1}{\sqrt{(d4*sin\theta{_3}+a2)^2+(d4*cos\theta{_3})^2}}\\
 \theta{_2}=asin(\frac{z-d6*r33-d1}{\sqrt{(d4*sin\theta{_3}+a2)^2+(d4*cos\theta{_3})^2}})+\alpha
+
 $$
 下面求解$\theta{_5}$，观察由未知角度组成的矩阵$_6^3\!T$，观察到
+
 $$
 _6^3\!T(2,3)=-cos\theta{_5}
+
 $$
 再将已知参数的$_6^0\!T$变换成$_6^3\!T$
+
 $$
 _6^3\!T=(_1^0\!T*_2^1\!T*_3^2\!T)^{-1}*_6^0\!T\\
 _6^3\!T(2,3)=r33*cos(\theta{_2}+\theta{_3})-r23*sin\theta{_1}*sin(\theta{_2}+\theta{_3})-r13*cos\theta{_1}*sin(\theta{_2}+\theta{_3})
+
 $$
 因此有
 $$
 \theta{_5}=acos(r23*sin\theta{_1}*sin(\theta{_2}+\theta{_3})+r13*cos\theta{_1}*sin(\theta{_2}+\theta{_3})-r33*cos(\theta{_2}+\theta{_3}))
+
 $$
 下面求解$\theta{_4}$和$\theta{_6}$，观察由未知角度组成的矩阵$_6^1\!T$，观察到
+
 $$
 _6^1\!T(2,3)=cos\theta{_5}*sin\theta{_4}
+
 $$
 再将已知参数的$_6^0\!T$变换成$_6^1\!T$
+
 $$
 _6^1\!T=(_1^0\!T)^{-1}*_6^0\!T\\
 _6^1\!T(2,3)=cos\theta{_1}*r23-sin\theta{_1}*r13
+
 $$
 因此
+
 $$
 \theta{_4}=asin(\frac{cos\theta{_1}*r23-sin\theta{_1}*r13}{cos\theta{_5}})
+
 $$
 在观察上述$_6^1\!T$，观察到存在恒等式
+
 $$
 -(r11*cos\theta{_1}*sin(\theta{_2}+\theta{_3})+r21*sin\theta{_1}*sin(\theta{_2}+\theta{_3})-r31*cos(\theta{_2}+\theta{_3}))=cos\theta{_6}*sin\theta{_5}\\
 r12*cos\theta{_1}*sin(\theta{_2}+\theta{_3})+r22*sin\theta{_1}*sin(\theta{_2}+\theta{_3})-r32*cos(\theta{_2}+\theta{_3})=sin\theta{_6}*sin\theta{_5}
+
 $$
 将其上下相比有
+
 $$
 \theta{_6}=atan(\frac{r12*cos\theta{_1}*sin(\theta{_2}+\theta{_3})+r22*sin\theta{_1}*sin(\theta{_2}+\theta{_3})-r32*cos(\theta{_2}+\theta{_3})}{-(r11*cos\theta{_1}*sin(\theta{_2}+\theta{_3})+r21*sin\theta{_1}*sin(\theta{_2}+\theta{_3})-r31*cos(\theta{_2}+\theta{_3}))})
+
 $$
 
 至此六个角度都通过解析法解出。
