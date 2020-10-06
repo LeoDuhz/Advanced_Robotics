@@ -1,0 +1,6 @@
+<launch>
+    <!-- <node pkg="course_agv_nav" type="tracking.py" name="tracking" ns="course_agv" output="screen"/> -->
+    <!-- <node pkg="course_agv_nav" type="stupid_tracking.py" name="tracking" ns="course_agv" output="screen"/> -->
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find course_agv_nav)/launch/nav.rviz"/>
+</launch>
