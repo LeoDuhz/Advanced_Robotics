@@ -15,7 +15,7 @@ document for reference: Document.md
 
 source file: /course_sgv_icp/src/icp.cpp
 
-document for reference: Document.m
+document for reference: Document.md
 
 **robot_arm**: robot arm experiments based on the Anno robot arm
 
@@ -27,6 +27,6 @@ Experiment 3: Trajectory Planning
 
 Experiment 4: Knocking the Rings (Simulation & Real)
 
-source file: /probot_gazebo_src
+source file: /probot_gazebo/src
 
 document for reference: Document.md
