@@ -1,32 +1,29 @@
 # Advanced_Robotics
 path planning, trajectory planning, icp, robot arm project 
 
-ZJU summer class of Prof.Xiong Rong, Prof.Zhou Chunlin 
+ZJU summer class of Prof.Xiong Rong, Prof.Zhou Chunlin, ZJU Robotics Lab
 
-ZJU Robotics Lab
 
---**stupid_yellow_car**--: path planning and trajectory planning based on the JIAZHI yellow car
 
-source file: /course_agv_nav/scripts/rrt.py dwa.py global_planner.py local_planner.py
+- **stupid_yellow_car**: path planning and trajectory planning based on the JIAZHI yellow car
 
-document for reference: Document.md 
+`source file:` /course_agv_nav/scripts/rrt.py dwa.py global_planner.py local_planner.py
 
-**icp**: icp project based on rosbag simulation
+`document for reference:` [Document.md](stupid_yellow_car/Document.md) 
 
-source file: /course_sgv_icp/src/icp.cpp
+- **icp**: icp project based on rosbag simulation
 
-document for reference: Document.md
+`source file:` /course_sgv_icp/src/icp.cpp
 
-**robot_arm**: robot arm experiments based on the Anno robot arm
+`document for reference:` [Document.md](icp/Document.md)
 
-Experiment 1: DK & IK
+- **robot_arm**: robot arm experiments based on the Anno robot arm
+  - Experiment 1: DK & IK
+  - Experiment 2: Velocity Passing
+  - Experiment 3: Trajectory Planning
+  - Experiment 4: Knocking the Rings (Simulation & Real)
 
-Experiment 2: Velocity Passing
+`source file:`  /probot_gazebo/src
 
-Experiment 3: Trajectory Planning
+`document for reference:` [Document.md](robot_arm/Document.md) / [Document.pdf](robot_arm/Document.pdf)
 
-Experiment 4: Knocking the Rings (Simulation & Real)
-
-source file: /probot_gazebo/src
-
-document for reference: Document.md/pdf
