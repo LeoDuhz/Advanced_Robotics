@@ -5,7 +5,7 @@ ZJU summer class of Prof.Xiong Rong, Prof.Zhou Chunlin
 
 ZJU Robotics Lab
 
---**stupid_yellow_car**--: path planning and trajectory planning based on the JIAZHI yellow car
+-- **stupid_yellow_car** --: path planning and trajectory planning based on the JIAZHI yellow car
 
 source file: /course_agv_nav/scripts/rrt.py dwa.py global_planner.py local_planner.py
 
